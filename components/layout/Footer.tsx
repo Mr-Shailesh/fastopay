@@ -42,7 +42,7 @@ export function Footer() {
       localStorage.removeItem("auth_tokens");
       localStorage.removeItem("auth_user");
 
-      toast.success("Account deleted successfully");
+      toast.success("All accounts deleted successfully");
 
       setTimeout(() => {
         router.push("/");

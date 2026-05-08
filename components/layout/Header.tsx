@@ -109,14 +109,10 @@ export function Header() {
                 key={item.id}
                 href={item.href}
                 onClick={(event) => handleSectionNavigation(event, item.id)}
-                className={`text-sm font-medium transition-all duration-200 relative ${
+                className={`text-sm font-medium transition-all duration-200 relative pb-1 ${
                   activeSection === item.id
-                    ? "text-blue-600"
-                    : "text-gray-600 hover:text-gray-900"
-                } ${
-                  activeSection === item.id
-                    ? "after:absolute after:bottom-0 after:left-0 after:right-0 after:h-0.5 after:bg-blue-600"
-                    : ""
+                    ? "text-blue-600 border-b-2 border-blue-600"
+                    : "text-gray-600 hover:text-gray-900 border-b-2 border-transparent hover:border-gray-300"
                 }`}
               >
                 {item.label}
