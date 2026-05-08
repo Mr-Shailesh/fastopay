@@ -238,9 +238,7 @@ export function ContactSection() {
                   options={select.options}
                   value={formik.values[select.name]}
                   onBlur={formik.handleBlur}
-                  onChange={(event) =>
-                    handleFieldChange(select.name, event.target.value)
-                  }
+                  onValueChange={(value) => handleFieldChange(select.name, value)}
                   error={getFieldError(select.name)}
                 />
               ))}

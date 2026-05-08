@@ -2,10 +2,23 @@
 
 import { LucideIcon } from "lucide-react";
 import {
+  FocusEventHandler,
   InputHTMLAttributes,
   SelectHTMLAttributes,
   TextareaHTMLAttributes,
 } from "react";
+import { Checkbox } from "@/components/ui/checkbox";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
+import { Textarea } from "@/components/ui/textarea";
+import { cn } from "@/lib/utils";
 
 interface BaseFieldProps {
   label: string;
@@ -23,8 +36,10 @@ interface TextInputProps
 interface SelectFieldProps
   extends
     BaseFieldProps,
-    Omit<SelectHTMLAttributes<HTMLSelectElement>, "className"> {
+    Omit<SelectHTMLAttributes<HTMLSelectElement>, "className" | "onChange" | "onBlur"> {
   options: string[];
+  onValueChange?: (value: string) => void;
+  onBlur?: FocusEventHandler<HTMLButtonElement>;
 }
 
 interface TextareaFieldProps
@@ -46,9 +61,11 @@ const controlBaseClassName =
   "rounded-md border bg-white transition-all focus-within:border-blue-500 focus-within:ring-4 focus-within:ring-blue-100";
 
 const getControlClassName = (hasError: boolean, disabled?: boolean) =>
-  `${controlBaseClassName} ${
-    hasError ? "border-red-400 bg-red-50/40" : "border-slate-200"
-  } ${disabled ? "bg-slate-100 text-slate-500" : ""}`;
+  cn(
+    controlBaseClassName,
+    hasError ? "border-red-400 bg-red-50/40" : "border-slate-200",
+    disabled ? "bg-slate-100 text-slate-500" : "",
+  );
 
 export function TextInput({
   label,
@@ -59,13 +76,13 @@ export function TextInput({
   ...props
 }: TextInputProps) {
   return (
-    <label className="block">
+    <Label>
       <span className={labelClassName}>{label}</span>
       <div
-        className={`flex h-11 items-center gap-3 px-3 ${getControlClassName(
-          Boolean(error),
-          disabled,
-        )}`}
+        className={cn(
+          "flex h-11 items-center gap-3 px-3",
+          getControlClassName(Boolean(error), disabled),
+        )}
       >
         {leadingAddon && (
           <span className="shrink-0 border-r border-slate-200 pr-3 text-sm font-bold text-slate-950">
@@ -73,15 +90,10 @@ export function TextInput({
           </span>
         )}
         {Icon && <Icon className="h-5 w-5 shrink-0 text-slate-400" />}
-        <input
-          {...props}
-          disabled={disabled}
-          aria-invalid={Boolean(error)}
-          className="h-full w-full bg-transparent text-slate-950 outline-none placeholder:text-slate-400 disabled:text-slate-500"
-        />
+        <Input {...props} disabled={disabled} aria-invalid={Boolean(error)} />
       </div>
       {error && <p className={errorClassName}>{error}</p>}
-    </label>
+    </Label>
   );
 }
 
@@ -91,31 +103,45 @@ export function SelectField({
   icon: Icon,
   options,
   disabled,
-  ...props
+  value,
+  onValueChange,
+  name,
+  onBlur,
 }: SelectFieldProps) {
   return (
-    <label className="block">
+    <Label>
       <span className={labelClassName}>{label}</span>
-      <div
-        className={`flex h-11 items-center gap-3 px-3 ${getControlClassName(
-          Boolean(error),
-          disabled,
-        )}`}
-      >
-        {Icon && <Icon className="h-5 w-5 shrink-0 text-slate-400" />}
-        <select
-          {...props}
+      <div className="relative">
+        {Icon && (
+          <Icon className="pointer-events-none absolute left-3 top-1/2 z-10 h-5 w-5 -translate-y-1/2 text-slate-400" />
+        )}
+        <Select
+          value={String(value || "")}
+          onValueChange={onValueChange}
+          name={name}
           disabled={disabled}
-          aria-invalid={Boolean(error)}
-          className="h-full w-full bg-transparent text-slate-600 outline-none disabled:text-slate-500"
         >
-          {options.map((option) => (
-            <option key={option}>{option}</option>
-          ))}
-        </select>
+          <SelectTrigger
+            onBlur={onBlur}
+            aria-invalid={Boolean(error)}
+            className={cn(
+              Icon ? "pl-10" : "",
+              error ? "border-red-400 bg-red-50/40" : "border-slate-200",
+            )}
+          >
+            <SelectValue />
+          </SelectTrigger>
+          <SelectContent>
+            {options.map((option) => (
+              <SelectItem key={option} value={option}>
+                {option}
+              </SelectItem>
+            ))}
+          </SelectContent>
+        </Select>
       </div>
       {error && <p className={errorClassName}>{error}</p>}
-    </label>
+    </Label>
   );
 }
 
@@ -127,19 +153,17 @@ export function TextareaField({
   ...props
 }: TextareaFieldProps) {
   return (
-    <label className="block">
+    <Label>
       <span className={labelClassName}>{label}</span>
-      <textarea
+      <Textarea
         {...props}
         rows={rows}
         disabled={disabled}
         aria-invalid={Boolean(error)}
-        className={`w-full resize-y rounded-md border px-4 py-3 text-slate-950 outline-none transition-all placeholder:text-slate-400 focus:border-blue-500 focus:ring-4 focus:ring-blue-100 disabled:bg-slate-100 disabled:text-slate-500 ${
-          error ? "border-red-400 bg-red-50/40" : "border-slate-200"
-        }`}
+        className={error ? "border-red-400 bg-red-50/40" : "border-slate-200"}
       />
       {error && <p className={errorClassName}>{error}</p>}
-    </label>
+    </Label>
   );
 }
 
@@ -152,7 +176,7 @@ export function MultiSelectField({
 }: MultiSelectFieldProps) {
   return (
     <div>
-      <span className={labelClassName}>{label}</span>
+      <Label className={labelClassName}>{label}</Label>
       <div className={`grid gap-2 ${columnsClassName}`}>
         {options.map((option) => {
           const isSelected = values.includes(option);
@@ -160,17 +184,16 @@ export function MultiSelectField({
           return (
             <label
               key={option}
-              className={`flex min-h-10 items-center gap-2 rounded-md border px-3 py-2 text-xs font-semibold transition-colors ${
+              className={cn(
+                "flex min-h-10 items-center gap-2 rounded-md border px-3 py-2 text-xs font-semibold transition-colors",
                 isSelected
                   ? "border-blue-300 bg-blue-50 text-blue-700"
-                  : "border-slate-200 text-slate-700 hover:border-blue-300 hover:bg-blue-50"
-              }`}
+                  : "border-slate-200 text-slate-700 hover:border-blue-300 hover:bg-blue-50",
+              )}
             >
-              <input
-                type="checkbox"
+              <Checkbox
                 checked={isSelected}
-                onChange={() => onToggle(option)}
-                className="h-4 w-4 accent-blue-600"
+                onCheckedChange={() => onToggle(option)}
               />
               <span>{option}</span>
             </label>
