@@ -31,13 +31,21 @@ export function Footer() {
           <div className="max-w-md">
             <Link
               href="/"
+              aria-label="FastoPay home"
               className="mb-6 inline-flex items-center rounded-lg bg-white px-3 py-2"
             >
               <Image
+                src="/logo/logo-icon.png"
+                alt="logo"
+                width={37}
+                height={36}
+                className="h-9 w-auto"
+              />
+              <Image
                 src="/logo/logo.png"
                 alt="FastoPay"
-                width={151}
-                height={31}
+                width={174}
+                height={36}
                 className="h-8 w-auto"
               />
             </Link>

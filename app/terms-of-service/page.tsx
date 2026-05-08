@@ -1,6 +1,16 @@
+import type { Metadata } from "next";
 import { Footer } from "@/components/layout/Footer";
 import { Header } from "@/components/layout/Header";
 import { termsOfServiceSections } from "@/hooks/constant";
+
+export const metadata: Metadata = {
+  title: "Terms of Service",
+  description:
+    "Review the terms for using FastoPay's business payment management services, accounts, payment approvals, and platform availability.",
+  alternates: {
+    canonical: "/terms-of-service",
+  },
+};
 
 export default function TermsOfServicePage() {
   return (

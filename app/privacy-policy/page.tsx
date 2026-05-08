@@ -1,6 +1,16 @@
+import type { Metadata } from "next";
 import { Footer } from "@/components/layout/Footer";
 import { Header } from "@/components/layout/Header";
 import { privacyPolicySections } from "@/hooks/constant";
+
+export const metadata: Metadata = {
+  title: "Privacy Policy",
+  description:
+    "Read how FastoPay collects, uses, protects, and shares information for business payment management services.",
+  alternates: {
+    canonical: "/privacy-policy",
+  },
+};
 
 export default function PrivacyPolicyPage() {
   return (

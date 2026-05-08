@@ -1,6 +1,16 @@
+import type { Metadata } from "next";
 import { Footer } from "@/components/layout/Footer";
 import { Header } from "@/components/layout/Header";
 import { refundAndCancellationSections } from "@/hooks/constant";
+
+export const metadata: Metadata = {
+  title: "Refund and Cancellation Policy",
+  description:
+    "Understand how FastoPay handles subscription cancellations, refund eligibility, setup fees, and refund processing timelines.",
+  alternates: {
+    canonical: "/refund-and-cancellation-policy",
+  },
+};
 
 export default function RefundAndCancellationPolicyPage() {
   return (

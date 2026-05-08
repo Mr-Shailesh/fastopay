@@ -85,7 +85,7 @@ export function Header() {
           >
             <Image
               src="/logo/logo-icon.png"
-              alt=""
+              alt="logo-icon"
               width={37}
               height={36}
               priority
@@ -93,7 +93,7 @@ export function Header() {
             />
             <Image
               src="/logo/logo.png"
-              alt=""
+              alt="logo"
               width={174}
               height={36}
               priority
@@ -159,6 +159,10 @@ export function Header() {
 
           <button
             onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
+            aria-label={
+              mobileMenuOpen ? "Close navigation menu" : "Open navigation menu"
+            }
+            aria-expanded={mobileMenuOpen}
             className="md:hidden p-2 hover:bg-gray-100 rounded-lg"
           >
             {mobileMenuOpen ? (
