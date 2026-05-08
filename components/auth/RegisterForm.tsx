@@ -5,7 +5,7 @@ import { useRouter } from "next/navigation";
 import { useAuth } from "@/hooks/useAuth";
 import { registerSchema } from "@/lib/validation/authSchemas";
 import { getErrorMessage } from "@/lib/utils";
-import { Toast, useToast } from "@/components/common/Toast";
+import { toast } from "sonner";
 import { MultiSelectField, TextInput } from "@/components/common/FormControls";
 import { useState } from "react";
 import Link from "next/link";
@@ -23,7 +23,6 @@ const BUDGET_OPTIONS = ["$0-10K", "$10K-50K", "$50K-100K", "$100K+"];
 export function RegisterForm() {
   const router = useRouter();
   const { register } = useAuth();
-  const { toasts, showToast } = useToast();
   const [isSubmitting, setIsSubmitting] = useState(false);
 
   const formik = useFormik({
@@ -41,10 +40,10 @@ export function RegisterForm() {
       setIsSubmitting(true);
       try {
         await register(values);
-        showToast("Registration successful! Redirecting...", "success");
+        toast.success("Registration successful! Redirecting...");
         router.push("/dashboard");
       } catch (error: unknown) {
-        showToast(getErrorMessage(error, "Registration failed"), "error");
+        toast.error(getErrorMessage(error, "Registration failed"));
       } finally {
         setIsSubmitting(false);
       }
@@ -160,14 +159,6 @@ export function RegisterForm() {
         <ArrowLeft className="h-4 w-4" />
         Back to Home
       </Link>
-
-      {toasts.map((toast) => (
-        <Toast
-          key={toast.id}
-          message={toast.message}
-          type={toast.type}
-        />
-      ))}
     </>
   );
 }

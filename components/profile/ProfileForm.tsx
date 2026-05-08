@@ -4,7 +4,7 @@ import { useFormik } from "formik";
 import { useAuth } from "@/hooks/useAuth";
 import { profileSchema } from "@/lib/validation/authSchemas";
 import { getErrorMessage } from "@/lib/utils";
-import { Toast, useToast } from "@/components/common/Toast";
+import { toast } from "sonner";
 import { MultiSelectField, TextInput } from "@/components/common/FormControls";
 import { useState } from "react";
 import { User } from "@/types/index";
@@ -29,7 +29,6 @@ const BUDGET_OPTIONS = ["$0-10K", "$10K-50K", "$50K-100K", "$100K+"];
 
 export function ProfileForm() {
   const { user, updateProfile } = useAuth();
-  const { toasts, showToast } = useToast();
   const [isSubmitting, setIsSubmitting] = useState(false);
 
   const formik = useFormik({
@@ -55,9 +54,9 @@ export function ProfileForm() {
         };
 
         updateProfile(updateData);
-        showToast("Profile updated successfully!", "success");
+        toast.success("Profile updated successfully!");
       } catch (error: unknown) {
-        showToast(getErrorMessage(error, "Failed to update profile"), "error");
+        toast.error(getErrorMessage(error, "Failed to update profile"));
       } finally {
         setIsSubmitting(false);
       }
@@ -172,14 +171,6 @@ export function ProfileForm() {
           </Link>
         </div>
       </form>
-
-      {toasts.map((toast) => (
-        <Toast
-          key={toast.id}
-          message={toast.message}
-          type={toast.type}
-        />
-      ))}
     </>
   );
 }

@@ -7,6 +7,7 @@ import { Menu, X } from "lucide-react";
 import { MouseEvent, useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
 import { navItems } from "@/hooks/constant";
+import { toast } from "sonner";
 
 export function Header() {
   const { isAuthenticated, logout, user } = useAuth();
@@ -18,6 +19,7 @@ export function Header() {
     logout();
     router.push("/");
     setMobileMenuOpen(false);
+    toast.success("Logged out successfully");
   };
 
   useEffect(() => {

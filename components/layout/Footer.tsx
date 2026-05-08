@@ -2,10 +2,17 @@
 
 import Image from "next/image";
 import Link from "next/link";
-import { MouseEvent } from "react";
+import { MouseEvent, useState } from "react";
+import { useRouter } from "next/navigation";
+import { AlertTriangle } from "lucide-react";
+import { toast } from "sonner";
 import { productLinks, socialLinks, supportLinks } from "@/hooks/constant";
+import { getErrorMessage } from "@/lib/utils";
 
 export function Footer() {
+  const [showDeleteModal, setShowDeleteModal] = useState(false);
+  const router = useRouter();
+
   const handleSectionNavigation = (
     event: MouseEvent<HTMLAnchorElement>,
     sectionId?: string,
@@ -22,6 +29,28 @@ export function Footer() {
 
     event.preventDefault();
     section.scrollIntoView({ behavior: "smooth", block: "start" });
+  };
+
+  const handleAccountDeletionClick = (event: MouseEvent<HTMLAnchorElement>) => {
+    event.preventDefault();
+    setShowDeleteModal(true);
+  };
+
+  const handleDeleteAccount = () => {
+    try {
+      localStorage.removeItem("auth_users");
+      localStorage.removeItem("auth_tokens");
+      localStorage.removeItem("auth_user");
+
+      toast.success("Account deleted successfully");
+
+      setTimeout(() => {
+        router.push("/");
+      }, 500);
+    } catch (error: unknown) {
+      toast.error(getErrorMessage(error, "Failed to delete account"));
+    }
+    setShowDeleteModal(false);
   };
 
   return (
@@ -83,17 +112,29 @@ export function Footer() {
             <ul className="space-y-4">
               {productLinks.map((link) => (
                 <li key={link.label}>
-                  <Link
-                    href={link.href}
-                    onClick={(event) =>
-                      handleSectionNavigation(event, link.sectionId)
-                    }
-                    className={`text-slate-400 transition-colors ${
-                      link.danger ? "hover:text-red-500" : "hover:text-white"
-                    }`}
-                  >
-                    {link.label}
-                  </Link>
+                  {link.label === "Account Deletion Request" ? (
+                    <a
+                      href="#"
+                      onClick={handleAccountDeletionClick}
+                      className={`text-slate-400 transition-colors ${
+                        link.danger ? "hover:text-red-500" : "hover:text-white"
+                      }`}
+                    >
+                      {link.label}
+                    </a>
+                  ) : (
+                    <Link
+                      href={link.href}
+                      onClick={(event) =>
+                        handleSectionNavigation(event, link.sectionId)
+                      }
+                      className={`text-slate-400 transition-colors ${
+                        link.danger ? "hover:text-red-500" : "hover:text-white"
+                      }`}
+                    >
+                      {link.label}
+                    </Link>
+                  )}
                 </li>
               ))}
             </ul>
@@ -126,6 +167,39 @@ export function Footer() {
           </p>
         </div>
       </div>
+
+      {showDeleteModal && (
+        <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50">
+          <div className="bg-white rounded-lg shadow-xl max-w-md w-full mx-4 p-6">
+            <div className="flex items-center gap-3 mb-4">
+              <AlertTriangle className="w-6 h-6 text-red-600" />
+              <h2 className="text-xl font-bold text-gray-900">
+                Delete Account
+              </h2>
+            </div>
+
+            <p className="text-gray-600 mb-6">
+              Are you sure you want to delete your account? This action will
+              remove all your data from local storage and cannot be undone.
+            </p>
+
+            <div className="flex gap-3">
+              <button
+                onClick={() => setShowDeleteModal(false)}
+                className="flex-1 px-4 py-2 border border-gray-300 text-gray-700 rounded-lg font-semibold hover:bg-gray-50"
+              >
+                Cancel
+              </button>
+              <button
+                onClick={handleDeleteAccount}
+                className="flex-1 px-4 py-2 bg-red-600 text-white rounded-lg font-semibold hover:bg-red-700"
+              >
+                Yes, Delete
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
     </footer>
   );
 }

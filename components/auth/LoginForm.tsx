@@ -5,7 +5,7 @@ import { useRouter } from "next/navigation";
 import { useAuth } from "@/hooks/useAuth";
 import { loginSchema } from "@/lib/validation/authSchemas";
 import { getErrorMessage } from "@/lib/utils";
-import { Toast, useToast } from "@/components/common/Toast";
+import { toast } from "sonner";
 import { TextInput } from "@/components/common/FormControls";
 import { useState } from "react";
 import Link from "next/link";
@@ -14,7 +14,6 @@ import { ArrowLeft, Lock, Mail } from "lucide-react";
 export function LoginForm() {
   const router = useRouter();
   const { login } = useAuth();
-  const { toasts, showToast } = useToast();
   const [isSubmitting, setIsSubmitting] = useState(false);
 
   const formik = useFormik({
@@ -27,10 +26,10 @@ export function LoginForm() {
       setIsSubmitting(true);
       try {
         await login(values.email, values.password);
-        showToast("Login successful!", "success");
+        toast.success("Login successful!");
         router.push("/dashboard");
       } catch (error: unknown) {
-        showToast(getErrorMessage(error, "Login failed"), "error");
+        toast.error(getErrorMessage(error, "Login failed"));
       } finally {
         setIsSubmitting(false);
       }
@@ -86,14 +85,6 @@ export function LoginForm() {
         <ArrowLeft className="h-4 w-4" />
         Back to Home
       </Link>
-
-      {toasts.map((toast) => (
-        <Toast
-          key={toast.id}
-          message={toast.message}
-          type={toast.type}
-        />
-      ))}
     </>
   );
 }
